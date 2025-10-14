@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <locale.h>
 
 // Desafio Tetris Stack
 // Tema 3 - Integração de Fila e Pilha
@@ -11,7 +13,7 @@
 
 //STRUCT DAS PEÇAS
 typedef struct{
-    char peca[1];
+    char peca;
     int id;
 }Pecas;
 
@@ -37,8 +39,13 @@ int main() {
     //      0 - Sair
     // - A cada remoção, insira uma nova peça ao final da fila.
 
+    setlocale(LC_ALL, "pt_BR.UTF-8"); //deixar em português
+    srand(time(NULL)); //usar o horário do computador na hora de gerar os números
+    
+
     Fila f;
     int opcao;
+    
 
     do{
         menuPrincipal(&f);
@@ -48,7 +55,7 @@ int main() {
         switch (opcao)
         {
             case 1:
-                
+
         }
         
     }while(opcao != 0);
@@ -94,6 +101,30 @@ void inicializandoFila(Fila *f)
     f->total = 0;
 }
 
+//filaCheia()
+//verificando se a fila esta cheia
+void filaCheia(Fila *f)
+{
+    return f->total = MAX_P;
+}
+
+//filaVazia()
+//verificando se a fila esta vazia
+void filaVazia(Fila *f)
+{
+    return f->total == 0;
+}
+
+//inserindoPrimeiraLista()
+//sortear as primeiras peças
+void inserindoPrimeiraLista(Fila *f)
+{
+    for(int i = 0; i < MAX_P; i++)
+    {
+        gerarPecas(f);
+    }
+}
+
 //menuPrincipal
 void menuPrincipal(Fila *f)
 {
@@ -110,4 +141,68 @@ void menuPrincipal(Fila *f)
     printf("----------------------------\n");
     printf("Escolha sua opção: ");
 
+}
+
+//gerarPecas()
+//Função para gerar as pecas
+void gerarPecas(Fila *f)
+{
+    static int ID = 1;
+    int num = rand()%4;
+    int i=0;
+
+    char tipos[] = {'T', 'I', 'O', 'L'};
+
+    Pecas novaPeca;
+    novaPeca.peca = tipos[num];
+    novaPeca.id = ID++;
+
+    inserir(f, novaPeca);
+
+}
+
+//inserir()
+//inserindo as peças na fila
+void inserir(Fila *f, Pecas p, int id)
+{
+    if(filaCheia)
+    {
+        printf("\nErro: A fila esta cheia, tire um item antes de acrescentar!\n");
+        return;
+    }
+
+    f->itens[f->fim] = p;
+    f->fim = (f->fim + 1) % MAX_P;
+    f->total++;
+
+}
+
+//remover()
+//removendo peças
+void remover(Fila *f)
+{
+    if(filaVazia)
+    {
+        printf("\nErro: A fila está vazia, não tem o que remover\n");
+    }
+    
+    Pecas removida = f->itens[f->inicio];
+    f->inicio = (f->inicio + 1) % MAX_P;
+    f->total--;
+}
+
+//listarPecas()
+void listarPecas(Fila *f)
+{
+    if(filaVazia)
+    {
+        printf("Erro: A lista está vazia!");
+    }
+
+    printf("\n----------------\n");
+    printf("Fila de peças: \n");
+    for(int i = 0, idx = f->inicio; i < f-> total; i++, idx = (idx + 1) % MAX_P){
+        printf("[%s%d]\n", f->itens[idx].peca, f->itens[idx].id);
+    }
+    printf("\n----------------\n");
 }
