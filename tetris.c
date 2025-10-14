@@ -1,9 +1,27 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 // Desafio Tetris Stack
 // Tema 3 - Integração de Fila e Pilha
 // Este código inicial serve como base para o desenvolvimento do sistema de controle de peças.
 // Use as instruções de cada nível para desenvolver o desafio.
+
+
+#define MAX_P 5
+
+//STRUCT DAS PEÇAS
+typedef struct{
+    char peca[1];
+    int id;
+}Pecas;
+
+//STRCUT PARA A LISTA
+typedef struct{
+    Pecas itens[MAX_P];
+    int inicio;
+    int fim;
+    int total;
+}Fila;
 
 int main() {
 
@@ -19,7 +37,21 @@ int main() {
     //      0 - Sair
     // - A cada remoção, insira uma nova peça ao final da fila.
 
+    Fila f;
+    int opcao;
 
+    do{
+        menuPrincipal(&f);
+        scanf("%d", &opcao);
+
+
+        switch (opcao)
+        {
+            case 1:
+                
+        }
+        
+    }while(opcao != 0);
 
     // 🧠 Nível Aventureiro: Adição da Pilha de Reserva
     //
@@ -54,3 +86,28 @@ int main() {
     return 0;
 }
 
+//inicializandoFila()
+void inicializandoFila(Fila *f)
+{
+    f->inicio = 0;
+    f->fim = 0;
+    f->total = 0;
+}
+
+//menuPrincipal
+void menuPrincipal(Fila *f)
+{
+    printf("============================\n");
+    printf("\tTETRIS STACK\n");
+    printf("============================\n");
+
+    printf("1 - Jogar peça\n");
+    printf("2 - Inserir nova peça\n");
+    printf("0 - Sair\n\n");
+    printf("----------------------------\n");
+    printf("Fila atual: \n");
+    mostrarFila(&f);
+    printf("----------------------------\n");
+    printf("Escolha sua opção: ");
+
+}
