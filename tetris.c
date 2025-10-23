@@ -8,22 +8,32 @@
 // Este código inicial serve como base para o desenvolvimento do sistema de controle de peças.
 // Use as instruções de cada nível para desenvolver o desafio.
 
-
 #define MAX_P 5
 
-//STRUCT DAS PEÇAS
-typedef struct{
+// STRUCT DAS PEÇAS
+typedef struct {
     char peca;
     int id;
-}Pecas;
+} Pecas;
 
-//STRCUT PARA A LISTA
-typedef struct{
+// STRUCT PARA A LISTA
+typedef struct {
     Pecas itens[MAX_P];
     int inicio;
     int fim;
     int total;
-}Fila;
+} Fila;
+
+void inicializandoFila(Fila *f);
+int filaCheia(Fila *f);
+int filaVazia(Fila *f);
+void menuPrincipal(Fila *f);
+void inserindoPrimeiraLista(Fila *f);
+void gerarPecas(Fila *f);
+void inserir(Fila *f, Pecas p);
+void remover(Fila *f);
+void listarPecas(Fila *f);
+void mostrarFila(Fila *f);
 
 int main() {
 
@@ -39,26 +49,34 @@ int main() {
     //      0 - Sair
     // - A cada remoção, insira uma nova peça ao final da fila.
 
-    setlocale(LC_ALL, "pt_BR.UTF-8"); //deixar em português
-    srand(time(NULL)); //usar o horário do computador na hora de gerar os números
-    
+    setlocale(LC_ALL, "pt_BR.UTF-8");
+    srand(time(NULL));
 
     Fila f;
     int opcao;
     
+    inicializandoFila(&f);
+    inserindoPrimeiraLista(&f);
 
-    do{
+    do {
         menuPrincipal(&f);
         scanf("%d", &opcao);
 
-
-        switch (opcao)
-        {
+        switch (opcao) {
             case 1:
-
+                remover(&f);
+                gerarPecas(&f); // Repor a peça removida
+                break;
+            case 2:
+                gerarPecas(&f);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
         }
-        
-    }while(opcao != 0);
+    } while(opcao != 0);
 
     // 🧠 Nível Aventureiro: Adição da Pilha de Reserva
     //
@@ -101,16 +119,17 @@ void inicializandoFila(Fila *f)
     f->total = 0;
 }
 
+
 //filaCheia()
 //verificando se a fila esta cheia
-void filaCheia(Fila *f)
+int filaCheia(Fila *f)
 {
-    return f->total = MAX_P;
+    return f->total == MAX_P;
 }
 
 //filaVazia()
 //verificando se a fila esta vazia
-void filaVazia(Fila *f)
+int filaVazia(Fila *f)
 {
     return f->total == 0;
 }
@@ -137,7 +156,7 @@ void menuPrincipal(Fila *f)
     printf("0 - Sair\n\n");
     printf("----------------------------\n");
     printf("Fila atual: \n");
-    mostrarFila(&f);
+    mostrarFila(f);
     printf("----------------------------\n");
     printf("Escolha sua opção: ");
 
@@ -148,9 +167,7 @@ void menuPrincipal(Fila *f)
 void gerarPecas(Fila *f)
 {
     static int ID = 1;
-    int num = rand()%4;
-    int i=0;
-
+    int num = rand() % 4;
     char tipos[] = {'T', 'I', 'O', 'L'};
 
     Pecas novaPeca;
@@ -158,14 +175,13 @@ void gerarPecas(Fila *f)
     novaPeca.id = ID++;
 
     inserir(f, novaPeca);
-
 }
 
 //inserir()
 //inserindo as peças na fila
-void inserir(Fila *f, Pecas p, int id)
+void inserir(Fila *f, Pecas p)
 {
-    if(filaCheia)
+    if(filaCheia(f))
     {
         printf("\nErro: A fila esta cheia, tire um item antes de acrescentar!\n");
         return;
@@ -181,9 +197,10 @@ void inserir(Fila *f, Pecas p, int id)
 //removendo peças
 void remover(Fila *f)
 {
-    if(filaVazia)
+    if(filaVazia(f))
     {
         printf("\nErro: A fila está vazia, não tem o que remover\n");
+        return;
     }
     
     Pecas removida = f->itens[f->inicio];
@@ -194,7 +211,7 @@ void remover(Fila *f)
 //listarPecas()
 void listarPecas(Fila *f)
 {
-    if(filaVazia)
+    if(filaVazia(f))
     {
         printf("Erro: A lista está vazia!");
     }
@@ -202,7 +219,23 @@ void listarPecas(Fila *f)
     printf("\n----------------\n");
     printf("Fila de peças: \n");
     for(int i = 0, idx = f->inicio; i < f-> total; i++, idx = (idx + 1) % MAX_P){
-        printf("[%s%d]\n", f->itens[idx].peca, f->itens[idx].id);
+        printf("[%c%d]\n", f->itens[idx].peca, f->itens[idx].id);
     }
     printf("\n----------------\n");
+}
+
+//mostrarFila()
+void mostrarFila(Fila *f)
+{
+    if(filaVazia(f))
+    {
+        printf("Erro: a fila está vazia!");
+        return;
+    }
+    printf("Peças da fila:\n");
+
+    for(int i=0, idx=f->inicio; i < f->total; i++, idx=(idx+1)%MAX_P)
+    {
+        printf("(%c%d)\n", f->itens[idx].peca, f->itens[idx].id);
+    }
 }
