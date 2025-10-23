@@ -38,15 +38,15 @@ void inserindoPrimeiraLista(Fila *f);
 void gerarPecas(Fila *f);
 void inserir(Fila *f, Pecas p);
 void remover(Fila *f);
-void listarPecas(Fila *f);
 void mostrarFila(Fila *f);
 
 //FUNÇÕES PARA A PILHA
-void inicializarPilha(Pilha *p);
+void inicilizandoPilha(Pilha *p);
 int pilhaVazia(Pilha *p);
 int pilhaCheia(Pilha *p);
 void inserirPilha(Fila *f, Pilha *p);
 void mostrarPilha(Pilha *p);
+void removendoPilha(Pilha *p);
 
 //FUNÇÃO PRINCIPAL
 int main() {
@@ -73,19 +73,26 @@ int main() {
     inicializandoFila(&f);
     inserindoPrimeiraLista(&f);
 
+    inicilizandoPilha(&p);
+
     do {
-        menuPrincipal(&f);
+        menuPrincipal(&f, &p);
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
                 remover(&f);
+                gerarPecas(&f);
                 break;
             case 2:
                 inserirPilha(&f, &p);
                 break;
+            case 3:
+                removendoPilha(&p);
+                break;
             case 0:
                 printf("Saindo...\n");
+                sleep(1);
                 break;
             default:
                 printf("Opção inválida!\n");
@@ -162,14 +169,15 @@ void inserindoPrimeiraLista(Fila *f)
 //menuPrincipal
 void menuPrincipal(Fila *f, Pilha *p)
 {
-    sleep(2);
-    printf("============================\n");
+    sleep(1);
+    printf("\n\n============================\n");
     printf("\tTETRIS STACK\n");
     printf("============================\n");
 
     printf("1 - Jogar peça\n");
     printf("2 - Reservar\n");
-    printf("0 - Sair\n\n");
+    printf("3 - Usar peça reservada\n");
+    printf("0 - Sair\n");
     printf("----------------------------\n");
     printf("Fila atual: \n");
     mostrarFila(f);
@@ -225,22 +233,6 @@ void remover(Fila *f)
     f->total--;
 }
 
-//listarPecas()
-void listarPecas(Fila *f)
-{
-    if(filaVazia(f))
-    {
-        printf("Erro: A lista está vazia!");
-    }
-    sleep(1);
-    printf("\n----------------\n");
-    printf("Fila de peças: \n");
-    for(int i = 0, idx = f->inicio; i < f-> total; i++, idx = (idx + 1) % MAX_P){
-        printf("[%c%d]\n", f->itens[idx].peca, f->itens[idx].id);
-    }
-    printf("\n----------------\n");
-}
-
 //mostrarFila()
 void mostrarFila(Fila *f)
 {
@@ -250,7 +242,6 @@ void mostrarFila(Fila *f)
         return;
     }
     sleep(1);
-    printf("Peças da fila:\n");
 
     for(int i=0, idx=f->inicio; i < f->total; i++, idx=(idx+1)%MAX_P)
     {
@@ -287,23 +278,34 @@ void inserirPilha(Fila *f, Pilha *p)
 
     p->topo++;
     p->itens[p->topo] = f->itens[f->inicio];
-    remover(&f);
+    remover(f);
 }
 
 void mostrarPilha(Pilha *p)
 {
     if(pilhaVazia(p))
     {
-        printf("Erro: a Pilha está vazia!");
+        printf("A Pilha está vazia!\n");
         return;
     }
-
     sleep(1);
-    printf("\n----------------\n");
+    printf("----------------\n");
     printf("Pilha Atual: \n");
     for(int i = p->topo; i >= 0; i-- )
     {
-        printf("[%c %d]\n", p->itens[i]);
+        printf("(%c%d)\n", p->itens[i].peca, p->itens[i].id);
     }
-    printf("----------------\n");
+}
+
+//removendo peças da pilha
+void removendoPilha(Pilha *p)
+{
+    if(pilhaVazia(p))
+    {
+        printf("\nA Pilha está vazia!\n");
+        return;
+    }
+
+    p->topo--;
+
 }
