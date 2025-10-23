@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <locale.h>
-
+#include <unistd.h>
 // Desafio Tetris Stack
 // Tema 3 - Integração de Fila e Pilha
 // Este código inicial serve como base para o desenvolvimento do sistema de controle de peças.
 // Use as instruções de cada nível para desenvolver o desafio.
 
 #define MAX_P 5
-
+#define MAX_PILHA 3
 // STRUCT DAS PEÇAS
 typedef struct {
     char peca;
@@ -24,10 +24,16 @@ typedef struct {
     int total;
 } Fila;
 
+typedef struct{
+    Pecas itens[MAX_PILHA];
+    int topo;
+}Pilha;
+
+//FUNÇÕES DA FILA
 void inicializandoFila(Fila *f);
 int filaCheia(Fila *f);
 int filaVazia(Fila *f);
-void menuPrincipal(Fila *f);
+void menuPrincipal(Fila *f, Pilha *p);
 void inserindoPrimeiraLista(Fila *f);
 void gerarPecas(Fila *f);
 void inserir(Fila *f, Pecas p);
@@ -35,6 +41,14 @@ void remover(Fila *f);
 void listarPecas(Fila *f);
 void mostrarFila(Fila *f);
 
+//FUNÇÕES PARA A PILHA
+void inicializarPilha(Pilha *p);
+int pilhaVazia(Pilha *p);
+int pilhaCheia(Pilha *p);
+void inserirPilha(Fila *f, Pilha *p);
+void mostrarPilha(Pilha *p);
+
+//FUNÇÃO PRINCIPAL
 int main() {
 
     // 🧩 Nível Novato: Fila de Peças Futuras
@@ -53,6 +67,7 @@ int main() {
     srand(time(NULL));
 
     Fila f;
+    Pilha p;
     int opcao;
     
     inicializandoFila(&f);
@@ -65,10 +80,9 @@ int main() {
         switch (opcao) {
             case 1:
                 remover(&f);
-                gerarPecas(&f); // Repor a peça removida
                 break;
             case 2:
-                gerarPecas(&f);
+                inserirPilha(&f, &p);
                 break;
             case 0:
                 printf("Saindo...\n");
@@ -111,6 +125,7 @@ int main() {
     return 0;
 }
 
+//////////////////////////// FUNÇÕES PARA FILA //////////////////////
 //inicializandoFila()
 void inicializandoFila(Fila *f)
 {
@@ -145,18 +160,20 @@ void inserindoPrimeiraLista(Fila *f)
 }
 
 //menuPrincipal
-void menuPrincipal(Fila *f)
+void menuPrincipal(Fila *f, Pilha *p)
 {
+    sleep(2);
     printf("============================\n");
     printf("\tTETRIS STACK\n");
     printf("============================\n");
 
     printf("1 - Jogar peça\n");
-    printf("2 - Inserir nova peça\n");
+    printf("2 - Reservar\n");
     printf("0 - Sair\n\n");
     printf("----------------------------\n");
     printf("Fila atual: \n");
     mostrarFila(f);
+    mostrarPilha(p);
     printf("----------------------------\n");
     printf("Escolha sua opção: ");
 
@@ -215,7 +232,7 @@ void listarPecas(Fila *f)
     {
         printf("Erro: A lista está vazia!");
     }
-
+    sleep(1);
     printf("\n----------------\n");
     printf("Fila de peças: \n");
     for(int i = 0, idx = f->inicio; i < f-> total; i++, idx = (idx + 1) % MAX_P){
@@ -232,10 +249,61 @@ void mostrarFila(Fila *f)
         printf("Erro: a fila está vazia!");
         return;
     }
+    sleep(1);
     printf("Peças da fila:\n");
 
     for(int i=0, idx=f->inicio; i < f->total; i++, idx=(idx+1)%MAX_P)
     {
         printf("(%c%d)\n", f->itens[idx].peca, f->itens[idx].id);
     }
+}
+
+///////////////////// FUNÇÃO PARA A PILHA //////////////////////////
+void inicilizandoPilha(Pilha *p)
+{
+    p->topo = -1;
+}
+
+//Verifica se a pilha esta cheia
+int pilhaCheia(Pilha *p)
+{
+    return p->topo == MAX_PILHA - 1;
+}
+ // verifica sea pilha esta vazia
+int pilhaVazia(Pilha *p)
+{
+    return p->topo == -1;
+}
+
+//inserirndo peças da fila na pilha
+void inserirPilha(Fila *f, Pilha *p)
+{
+    
+    if(pilhaCheia(p))
+    {
+        printf("Erro: a Pilha está cheia!");
+        return;
+    }
+
+    p->topo++;
+    p->itens[p->topo] = f->itens[f->inicio];
+    remover(&f);
+}
+
+void mostrarPilha(Pilha *p)
+{
+    if(pilhaVazia(p))
+    {
+        printf("Erro: a Pilha está vazia!");
+        return;
+    }
+
+    sleep(1);
+    printf("\n----------------\n");
+    printf("Pilha Atual: \n");
+    for(int i = p->topo; i >= 0; i-- )
+    {
+        printf("[%c %d]\n", p->itens[i]);
+    }
+    printf("----------------\n");
 }
