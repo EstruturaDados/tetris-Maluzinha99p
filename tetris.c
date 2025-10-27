@@ -50,6 +50,8 @@ Pecas removendoPilha(Pilha *p);
 
 //FUNÇÕES DE INTERAÇÃO ENTRE PILHA E FILA
 void trocarTresItens(Fila *f, Pilha *p);
+void trocarFrenteComTopo(Fila *f, Pilha *p);
+
 
 //FUNÇÃO PRINCIPAL
 int main() {
@@ -123,9 +125,12 @@ int main() {
                 removendoPilha(&p);
                 break;
             case 4:
+                trocarFrenteComTopo(&f, &p);
+                sleep(1);
             break;
             case 5:
                 trocarTresItens(&f, &p);
+                sleep(1);
             break;
             case 0:
                 printf("Saindo...\n");
@@ -321,16 +326,47 @@ Pecas removendoPilha(Pilha *p)
 }
 
 //////////////////////////// INTERAÇÃO DE FILAS E PILHAS - NÍVEL MESTRE //////////////////////
-void trocarTresItens(Fila *f, Pilha *p)
+void trocarFrenteComTopo(Fila *f, Pilha *p)
 {
-    if(filaVazia(f))
+    if (filaVazia(f))
     {
+        printf("Erro: Fila está vazia!\n");
         return;
     }
-    f->inicio = 0;
-
-    for(int i=0; i<3; i++)
+    if (pilhaVazia(p))
     {
-        f->itens[i] = p->itens[i];
+        printf("Erro: Pilha está vazia!\n");
+        return;
     }
+    
+    // Troca a peça da frente da fila com o topo da pilha
+    Pecas temp = f->itens[f->inicio];
+    f->itens[f->inicio] = p->itens[p->topo];
+    p->itens[p->topo] = temp;
+    p->topo--;
+    
+    printf("Peça da frente da fila trocada com o topo da pilha!\n");
+}
+
+// Função para trocar os 3 primeiros da fila com as 3 peças da pilha
+void trocarTresItens(Fila *f, Pilha *p)
+{
+    if (p->topo < 2)
+    { 
+        printf("Erro: Pilha precisa ter exatamente 3 peças!");
+        return;
+    }
+    
+    // Realiza a troca dos 3 elementos
+    for (int i = 0; i < 3; i++)
+    {
+        int fila_index = (f->inicio + i) % MAX_P;
+        
+        // Troca as peças
+        Pecas temp = f->itens[fila_index];
+        f->itens[fila_index] = p->itens[i];
+        p->itens[i] = temp;
+    }
+    
+    printf("Troca realizada: 3 primeiros da fila com as 3 peças da pilha!\n");
 }
