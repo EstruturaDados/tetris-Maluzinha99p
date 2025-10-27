@@ -327,25 +327,22 @@ Pecas removendoPilha(Pilha *p)
 
 //////////////////////////// INTERAÇÃO DE FILAS E PILHAS - NÍVEL MESTRE //////////////////////
 void trocarFrenteComTopo(Fila *f, Pilha *p)
-{
-    if (filaVazia(f))
+{  
+    Fila auxx;
+    int index=0;
+    inicializandoFila(&auxx);
+    for(int i = 0; i < 3; i++)
     {
-        printf("Erro: Fila está vazia!\n");
-        return;
+        inserir(&auxx, p->itens[p->topo]);
+        index++;
+        removendoPilha(&p);
     }
-    if (pilhaVazia(p))
+
+
+    for(int i = index; i < 5; i++)
     {
-        printf("Erro: Pilha está vazia!\n");
-        return;
+        inserir(&f, &auxx[p->inicio]);
     }
-    
-    // Troca a peça da frente da fila com o topo da pilha
-    Pecas temp = f->itens[f->inicio];
-    f->itens[f->inicio] = p->itens[p->topo];
-    p->itens[p->topo] = temp;
-    p->topo--;
-    
-    printf("Peça da frente da fila trocada com o topo da pilha!\n");
 }
 
 // Função para trocar os 3 primeiros da fila com as 3 peças da pilha
