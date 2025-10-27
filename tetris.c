@@ -127,6 +127,7 @@ int main() {
                 break;
             case 4:
                 trocarPecaFrente(&f, &p, &pe);
+                removendoPilha(&p);
             break;
             case 5:
                 trocarTresItens(&f, &p, &pe);
@@ -346,7 +347,6 @@ void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe)
     int idxPilha = p->topo;
 
     f->itens[f->inicio] = p->itens[p->topo];
-    removendoPilha(p);
 
     printf("\nTroca realizada com sucesso!\n");
 }
