@@ -37,7 +37,7 @@ void menuPrincipal(Fila *f, Pilha *p);
 void inserindoPrimeiraLista(Fila *f);
 void gerarPecas(Fila *f);
 void inserir(Fila *f, Pecas p);
-void remover(Fila *f);
+Pecas remover(Fila *f);
 void mostrarFila(Fila *f);
 
 //FUNÇÕES PARA A PILHA
@@ -49,8 +49,8 @@ void mostrarPilha(Pilha *p);
 Pecas removendoPilha(Pilha *p);
 
 //FUNÇÕES DE INTERAÇÃO ENTRE PILHA E FILA
-void trocarTresItens(Fila *f, Pilha *p);
-void trocarFrenteComTopo(Fila *f, Pilha *p);
+void trocarTresItens(Fila *f, Pilha *p, Pecas *pe);
+void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe);
 
 
 //FUNÇÃO PRINCIPAL
@@ -102,6 +102,7 @@ int main() {
 
     Fila f;
     Pilha p;
+    Pecas pe;
     int opcao, i=0;
     
     inicializandoFila(&f);
@@ -125,13 +126,12 @@ int main() {
                 removendoPilha(&p);
                 break;
             case 4:
-                trocarFrenteComTopo(&f, &p);
-                sleep(1);
+                trocarPecaFrente(&f, &p, &pe);
             break;
             case 5:
-                trocarTresItens(&f, &p);
+                trocarTresItens(&f, &p, &pe);
                 sleep(1);
-            break;
+                break;
             case 0:
                 printf("Saindo...\n");
                 sleep(1);
@@ -235,17 +235,22 @@ void inserir(Fila *f, Pecas p)
 
 //remover()
 //removendo peças
-void remover(Fila *f)
+Pecas remover(Fila *f)
 {
+    Pecas removida;
     if(filaVazia(f))
     {
         printf("\nErro: A fila está vazia, não tem o que remover\n");
-        return;
+        // Retorna uma peça vazia em caso de erro
+        removida.peca = ' ';
+        removida.id = -1;
+        return removida;
     }
     
-    Pecas removida = f->itens[f->inicio];
+    removida = f->itens[f->inicio];
     f->inicio = (f->inicio + 1) % MAX_P;
     f->total--;
+    return removida; // FALTAVA ESTE RETURN
 }
 
 //mostrarFila()
@@ -315,39 +320,31 @@ void mostrarPilha(Pilha *p)
 //removendo peças da pilha
 Pecas removendoPilha(Pilha *p)
 {
-    if(pilhaVazia(p))
+    if(p->topo != -1)
     {
-        printf("\nA Pilha está vazia!\n");
-        return;
+        return p->itens[p->topo--];
     }
-
-    return p->itens[p->topo--];
-
+    printf("\nA Pilha está vazia!\n");
 }
 
 //////////////////////////// INTERAÇÃO DE FILAS E PILHAS - NÍVEL MESTRE //////////////////////
-void trocarFrenteComTopo(Fila *f, Pilha *p)
-{  
-    Fila auxx;
-    int index=0;
-    inicializandoFila(&auxx);
-    for(int i = 0; i < 3; i++)
-    {
-        inserir(&auxx, p->itens[p->topo]);
-        index++;
-        removendoPilha(&p);
-    }
 
-
-    for(int i = index; i < 5; i++)
-    {
-        inserir(&f, &auxx[p->inicio]);
-    }
-}
-
-// Função para trocar os 3 primeiros da fila com as 3 peças da pilha
-void trocarTresItens(Fila *f, Pilha *p)
+void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe)
 {
+    Pecas topo = p->itens[p->topo];
+    removendoPilha(&p);
+
+    int inicio = f->inicio - 1;
+    f->itens[inicio] = topo;
+    printf("\n\nTeste do 4:\n");
+    mostrarFila(&f);
+
+}
+// Função para trocar os 3 primeiros da fila com as 3 peças da pilha
+void trocarTresItens(Fila *f, Pilha *p, Pecas *pe)
+{
+    Fila aux;
+    inicializandoFila(&aux);
     if (p->topo < 2)
     { 
         printf("Erro: Pilha precisa ter exatamente 3 peças!");
@@ -355,15 +352,13 @@ void trocarTresItens(Fila *f, Pilha *p)
     }
     
     // Realiza a troca dos 3 elementos
-    for (int i = 0; i < 3; i++)
+    for (int i = p->topo; i >= 0; i--)
     {
-        int fila_index = (f->inicio + i) % MAX_P;
-        
-        // Troca as peças
-        Pecas temp = f->itens[fila_index];
-        f->itens[fila_index] = p->itens[i];
-        p->itens[i] = temp;
+        inserir(&aux, p->itens[i]);
     }
-    
+    int quant = MAX_P - aux.total;
+
+
+    mostrarFila(&aux);
     printf("Troca realizada: 3 primeiros da fila com as 3 peças da pilha!\n");
 }
