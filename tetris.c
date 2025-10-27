@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <locale.h>
-#include <unistd.h>
+ 
 // Desafio Tetris Stack
 // Tema 3 - Integração de Fila e Pilha
 // Este código inicial serve como base para o desenvolvimento do sistema de controle de peças.
@@ -46,7 +46,10 @@ int pilhaVazia(Pilha *p);
 int pilhaCheia(Pilha *p);
 void inserirPilha(Fila *f, Pilha *p);
 void mostrarPilha(Pilha *p);
-void removendoPilha(Pilha *p);
+Pecas removendoPilha(Pilha *p);
+
+//FUNÇÕES DE INTERAÇÃO ENTRE PILHA E FILA
+void trocarTresItens(Fila *f, Pilha *p);
 
 //FUNÇÃO PRINCIPAL
 int main() {
@@ -62,42 +65,6 @@ int main() {
     //      1 - Jogar peça (remover da frente)
     //      0 - Sair
     // - A cada remoção, insira uma nova peça ao final da fila.
-
-    setlocale(LC_ALL, "pt_BR.UTF-8");
-    srand(time(NULL));
-
-    Fila f;
-    Pilha p;
-    int opcao;
-    
-    inicializandoFila(&f);
-    inserindoPrimeiraLista(&f);
-
-    inicilizandoPilha(&p);
-
-    do {
-        menuPrincipal(&f, &p);
-        scanf("%d", &opcao);
-
-        switch (opcao) {
-            case 1:
-                remover(&f);
-                gerarPecas(&f);
-                break;
-            case 2:
-                inserirPilha(&f, &p);
-                break;
-            case 3:
-                removendoPilha(&p);
-                break;
-            case 0:
-                printf("Saindo...\n");
-                sleep(1);
-                break;
-            default:
-                printf("Opção inválida!\n");
-        }
-    } while(opcao != 0);
 
     // 🧠 Nível Aventureiro: Adição da Pilha de Reserva
     //
@@ -127,6 +94,47 @@ int main() {
     // - O menu deve ficar assim:
     //      4 - Trocar peça da frente com topo da pilha
     //      5 - Trocar 3 primeiros da fila com os 3 da pilha
+
+    setlocale(LC_ALL, "pt_BR.UTF-8");
+    srand(time(NULL));
+
+    Fila f;
+    Pilha p;
+    int opcao, i=0;
+    
+    inicializandoFila(&f);
+    inserindoPrimeiraLista(&f);
+
+    inicilizandoPilha(&p);
+
+    do {
+        menuPrincipal(&f, &p);
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                remover(&f);
+                gerarPecas(&f);
+                break;
+            case 2:
+                inserirPilha(&f, &p);
+                break;
+            case 3:
+                removendoPilha(&p);
+                break;
+            case 4:
+            break;
+            case 5:
+                trocarTresItens(&f, &p);
+            break;
+            case 0:
+                printf("Saindo...\n");
+                sleep(1);
+            break;
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while(opcao != 0);
 
 
     return 0;
@@ -177,6 +185,8 @@ void menuPrincipal(Fila *f, Pilha *p)
     printf("1 - Jogar peça\n");
     printf("2 - Reservar\n");
     printf("3 - Usar peça reservada\n");
+    printf("4 - Inverter a Fila\n");
+    printf("5 - Inverter os reservas com o primeiros elementos da lista\n");
     printf("0 - Sair\n");
     printf("----------------------------\n");
     printf("Fila atual: \n");
@@ -298,7 +308,7 @@ void mostrarPilha(Pilha *p)
 }
 
 //removendo peças da pilha
-void removendoPilha(Pilha *p)
+Pecas removendoPilha(Pilha *p)
 {
     if(pilhaVazia(p))
     {
@@ -306,6 +316,21 @@ void removendoPilha(Pilha *p)
         return;
     }
 
-    p->topo--;
+    return p->itens[p->topo--];
 
+}
+
+//////////////////////////// INTERAÇÃO DE FILAS E PILHAS - NÍVEL MESTRE //////////////////////
+void trocarTresItens(Fila *f, Pilha *p)
+{
+    if(filaVazia(f))
+    {
+        return;
+    }
+    f->inicio = 0;
+
+    for(int i=0; i<3; i++)
+    {
+        f->itens[i] = p->itens[i];
+    }
 }
