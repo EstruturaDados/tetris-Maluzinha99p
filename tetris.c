@@ -131,7 +131,7 @@ int main() {
             case 5:
                 trocarTresItens(&f, &p, &pe);
                 sleep(1);
-                break;
+            break;
             case 0:
                 printf("Saindo...\n");
                 sleep(1);
@@ -347,33 +347,21 @@ void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe)
 
     // troca simples entre frente da fila e topo da pilha
     f->itens[f->inicio] = p->itens[p->topo];
-    removendoPilha(&p);
+    removendoPilha(p);
 
     printf("\nTroca realizada com sucesso!\n");
 }
 // Função para trocar os 3 primeiros da fila com as 3 peças da pilha
 void trocarTresItens(Fila *f, Pilha *p, Pecas *pe)
 {
+    Fila auxx;
 
-    if(p->topo != MAX_PILHA -1)
-    {
-        ptintf("Erro: A pilha precisa de 3 itens!");
-    }
-    if(filaVazia(f))
-    {
-        printf("Erro: a Fila esta vazia!");
-    }
 
-    for(int i = 0; i < 3; i++)
+    for(int i = f->inicio; i <= f->fim; i++)
     {
-        int posicaoFila = (f->inicio + i) % MAX_P;
-        int posicaoPilha = p->topo - 1;
-
-        Pecas aux = f->itens[posicaoFila];
-        f->itens[posicaoFila] = p->itens[posicaoPilha];
-        p->itens[posicaoFila] = aux;
+        Pecas pFila = f->itens[i];
+        inserir(&auxx, pFila);
     }
-    mostrarFila(&f);
-    mostrarPilha(&p);
+    mostrarFila(&auxx);
     printf("Troca realizada: 3 primeiros da fila com as 3 peças da pilha!\n");
 }
