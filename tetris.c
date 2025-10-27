@@ -190,7 +190,7 @@ void menuPrincipal(Fila *f, Pilha *p)
     printf("1 - Jogar peça\n");
     printf("2 - Reservar\n");
     printf("3 - Usar peça reservada\n");
-    printf("4 - Inverter a Fila\n");
+    printf("4 - Trocar 1º item da pila com o 1º da fila\n");
     printf("5 - Inverter os reservas com o primeiros elementos da lista\n");
     printf("0 - Sair\n");
     printf("----------------------------\n");
@@ -320,7 +320,7 @@ void mostrarPilha(Pilha *p)
 //removendo peças da pilha
 Pecas removendoPilha(Pilha *p)
 {
-    if(p->topo != -1)
+    if(!pilhaVazia(p))
     {
         return p->itens[p->topo--];
     }
@@ -331,34 +331,49 @@ Pecas removendoPilha(Pilha *p)
 
 void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe)
 {
-    Pecas topo = p->itens[p->topo];
+    if(filaVazia(f))
+    {
+        printf("Erro: a fila está vazia, não há peça na frente para trocar.\n");
+        return;
+    }
+    if(pilhaVazia(p))
+    {
+        printf("Erro: a pilha está vazia, não há peça no topo para trocar.\n");
+        return;
+    }
+
+    int idxFila = f->inicio;
+    int idxPilha = p->topo;
+
+    // troca simples entre frente da fila e topo da pilha
+    f->itens[f->inicio] = p->itens[p->topo];
     removendoPilha(&p);
 
-    int inicio = f->inicio - 1;
-    f->itens[inicio] = topo;
-    printf("\n\nTeste do 4:\n");
-    mostrarFila(&f);
-
+    printf("\nTroca realizada com sucesso!\n");
 }
 // Função para trocar os 3 primeiros da fila com as 3 peças da pilha
 void trocarTresItens(Fila *f, Pilha *p, Pecas *pe)
 {
-    Fila aux;
-    inicializandoFila(&aux);
-    if (p->topo < 2)
-    { 
-        printf("Erro: Pilha precisa ter exatamente 3 peças!");
-        return;
-    }
-    
-    // Realiza a troca dos 3 elementos
-    for (int i = p->topo; i >= 0; i--)
+
+    if(p->topo != MAX_PILHA -1)
     {
-        inserir(&aux, p->itens[i]);
+        ptintf("Erro: A pilha precisa de 3 itens!");
     }
-    int quant = MAX_P - aux.total;
+    if(filaVazia(f))
+    {
+        printf("Erro: a Fila esta vazia!");
+    }
 
+    for(int i = 0; i < 3; i++)
+    {
+        int posicaoFila = (f->inicio + i) % MAX_P;
+        int posicaoPilha = p->topo - 1;
 
-    mostrarFila(&aux);
+        Pecas aux = f->itens[posicaoFila];
+        f->itens[posicaoFila] = p->itens[posicaoPilha];
+        p->itens[posicaoFila] = aux;
+    }
+    mostrarFila(&f);
+    mostrarPilha(&p);
     printf("Troca realizada: 3 primeiros da fila com as 3 peças da pilha!\n");
 }
