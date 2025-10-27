@@ -355,13 +355,19 @@ void trocarPecaFrente(Fila *f, Pilha *p, Pecas *pe)
 void trocarTresItens(Fila *f, Pilha *p, Pecas *pe)
 {
     Fila auxx;
+    inicializandoFila(&auxx);
 
-
-    for(int i = f->inicio; i <= f->fim; i++)
+    for (int i = p->topo; i >= 0; i--)
     {
-        Pecas pFila = f->itens[i];
-        inserir(&auxx, pFila);
+        inserir(&auxx, p->itens[i]);
     }
-    mostrarFila(&auxx);
+
+    while (!filaVazia(&auxx))
+    {
+        Pecas peca;
+        remover(&auxx, &peca);
+        inserir(f, peca);
+    }
+    mostrarFila(&f);
     printf("Troca realizada: 3 primeiros da fila com as 3 peças da pilha!\n");
 }
